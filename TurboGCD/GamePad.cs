@@ -1,6 +1,7 @@
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.GamePad;
 using Dalamud.Hooking;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using System;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace TurboGCD
     public unsafe sealed class GamePad//
     {
         private const int randomRange = 25;
+        private const long minimalDelayChangeSet = 16L, quickSwapChangeSet = 250;
         private const CrossHotbarFlags FlagsToRemove = CrossHotbarFlags.EditMode | CrossHotbarFlags.FadeRestOfScreen | CrossHotbarFlags.PetHotbarActive;
         private const CrossHotbarFlags FirstBar = CrossHotbarFlags.LeftSideToggleFocus | CrossHotbarFlags.LeftSideHoldFocus | CrossHotbarFlags.LeftSideFocus | CrossHotbarFlags.RightSideToggleFocus | CrossHotbarFlags.RightSideHoldFocus | CrossHotbarFlags.RightSideFocus;
         private const CrossHotbarFlags SecondBar = CrossHotbarFlags.ExpandedHoldLeftFocus | CrossHotbarFlags.ExpandedHoldRightFocus;
@@ -74,14 +76,20 @@ namespace TurboGCD
         private GamepadButtons lastButtonHold { get; set; }
         private uint lastActionHold { get; set; }
         private bool checkForDynamicThrottle { get; set; }
+        private long lastChangeSetTick { get; set; }
+        private int lastChangeSetNumber { get; set; }
+        private bool checkChangeSetRelease { get; set; }
+        private bool changeSetUsed { get; set; }
+
+        private AddonActionCross* AddonCross {  get; set; }
 
         public GamePad()//
         {
             if (gamepadPoll == null)
                 gamepadPoll = Services.Hooks.HookFromSignature<ControllerPoll>("40 55 53 57 41 54 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 44 0F 29 B4 24", GamepadPool);
-
+            if (AddonCross == null)
+                AddonCross = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
             gamepadPoll?.Enable();
-
             //if(useActionDetour == null)
             //{
             //    try
@@ -135,40 +143,96 @@ namespace TurboGCD
             int crossBarIndex = 0, buttonIndex = 0;
             try
             {
+                if (AddonCross->RaptureHotbarId < 10)
+                    return gamepadPoll.Original(requestInput);
                 var gamepadInput = (GamepadInput*)requestInput;
                 if (HotbarModule == null)
                     HotbarModule = RaptureHotbarModule.Instance();
-
                 var flags = HotbarModule->CrossHotbarFlags;
-                if (flags.HasFlag(CrossHotbarFlags.ChangeSetActive))
+                /*if (flags.HasFlag(CrossHotbarFlags.ChangeSetActive))
                 {
+                    var now = Environment.TickCount64;
+                    if (now - lastChangeSetTick > minimalDelayChangeSet)
+                    {
+                        lastChangeSetNumber = offsetCrossbar;
+                        lastChangeSetTick = now;
+                        checkChangeSetRelease = true;
+                    }
                     for (int i = 0; i < ButtonsLength; i++)
                         if (IsButtonPressed(ChangeSet[i]))
                         {
+                            changeSetUsed = true;
                             offsetCrossbar = i;
                             Services.PrintInfo($"Changing crossbar set to {i + 1}");
                         }
                     return gamepadPoll.Original(requestInput);
                 }
+                else if (checkChangeSetRelease)
+                {
+                    var now = Environment.TickCount64;
+                    if (now - lastChangeSetTick <= quickSwapChangeSet && !changeSetUsed)
+                    {
+                        if (offsetCrossbar == 0)
+                            offsetCrossbar = lastChangeSetNumber;
+                        else
+                            offsetCrossbar = 0;
+                    }
+                    checkChangeSetRelease = false;
+                    changeSetUsed = false;
+                }*/
                 bool inCombat = Services.Condition[ConditionFlag.InCombat];
                 bool flagsAreGood = IsHotbarFlagGood(flags);
                 if (!inCombat || !flagsAreGood || gcdsToCheck == null || gcdsToCheck.Length == 0)
                 {
                     if (Environment.TickCount64 >= currentThrottleDelay)
                     {
-                        Services.PrintInfo($"InCombat: {inCombat}\tIsHotbarFlagGood: {flagsAreGood}\tgdcsToCheck: {(gcdsToCheck == null ? 0 : gcdsToCheck.Length)}");
+                        Services.PrintInfo($"InCombat: {inCombat}\tIsHotbarFlagGood: {flagsAreGood}\tgdcsToCheck: {(gcdsToCheck == null ? 0 : gcdsToCheck.Length)} length");
                         currentThrottleDelay = Environment.TickCount64 + fixedThrottleDelay;
                     }
                     return gamepadPoll.Original(requestInput);
                 }
                 if ((flags & FirstBar) > 0)
-                    crossBarIndex = 0 + offsetCrossbar;
+                {
+                    //crossBarIndex = 0 + offsetCrossbar;
+                    crossBarIndex = AddonCross->RaptureHotbarId - 10;
+                }
                 else if ((flags & SecondBar) > 0)
-                    crossBarIndex = 1;
+                {
+                    //crossBarIndex = 1;
+                    if (AddonCross->ExpandedHoldMapValue < 1u)
+                    {
+                        Services.PrintFatal("Expanded Hold Map Value = 0");
+                        return gamepadPoll.Original(requestInput);
+                    }
+                    crossBarIndex = (int)((AddonCross->ExpandedHoldMapValue - 1u) / 2);
+                }
                 else if ((flags & ThirdBar) > 0)
-                    crossBarIndex = 2;
+                {
+                    uint value = uint.MaxValue;
+                    //crossBarIndex = 2;
+                    if((flags & CrossHotbarFlags.WXHBLeftFocus) > 0)
+                    {
+                        Services.GameConfig.TryGet(Dalamud.Game.Config.UiConfigOption.HotbarWXHBSetLeft, out value);
+                          
+                    }
+                    else
+                    {
+                        var found = Services.GameConfig.TryGet(Dalamud.Game.Config.UiConfigOption.HotbarWXHBSetRight, out value);
+                    }
+                    if (value != uint.MaxValue)
+                        crossBarIndex = (int)((value - 1u) / 2);
+                    else
+                    {
+                        Services.PrintFatal("Not found HotbarWXHBSetLeft/Right on GameConfig");
+                        return gamepadPoll.Original(requestInput);
+                    }
+                }
                 else
+                {
+                    Services.PrintInfo($"Returning before check loop");
                     return gamepadPoll.Original(requestInput);
+                }
+                Services.PrintInfo($"Crossbar Number {crossBarIndex + 1}");
                 int sumButtom = (flags & RightSide) > 0 ? ButtonsLength : 0;
                 var crossbar = HotbarModule->CrossHotbars[crossBarIndex];
                 for (int i = 0; i < ButtonsLength; i++)
@@ -178,6 +242,7 @@ namespace TurboGCD
                     var button = Buttons[i];
                     if (IsButtonHeld(button) && slot.ApparentSlotType == RaptureHotbarModule.HotbarSlotType.Action && gcdsToCheck.Contains(slot.ApparentActionId))
                     {
+                        Services.PrintInfo($"Button {button} is down and action {slot.ApparentActionId} is in hold");
                         if (Environment.TickCount64 >= currentThrottleDelay)
                         {
                             float randomness = ((RandomRange.Next(randomRange) - (randomRange * 0.5f)) * 0.01f) + 1f;

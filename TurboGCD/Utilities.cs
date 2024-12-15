@@ -1,7 +1,4 @@
-using Dalamud.Hooking;
 using Dalamud.Interface.Textures;
-using Dalamud.Interface.Textures.TextureWraps;
-using InteropGenerator.Runtime;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -17,7 +14,8 @@ namespace TurboGCD
             try
             {
                 return Services.Textures.GetFromGameIcon(new GameIconLookup(iconId));
-            }catch(System.Exception e)
+            }
+            catch (System.Exception e)
             {
                 Services.Log.Fatal($"{e.Message}\n{e.StackTrace}");
                 return null;
@@ -70,7 +68,7 @@ namespace TurboGCD
                 case JobID.DRG: //DRG                                                  
                 case JobID.NIN: //NIN                                                  
                 case JobID.SAM: //SAM                                                  
-                case JobID.RPR: 
+                case JobID.RPR:
                 case JobID.VPR: //VPR
                     iconId = 62584;
                     break;
@@ -135,10 +133,10 @@ public sealed class ContractResolverWithPrivates : CamelCasePropertyNamesContrac
     {
         var prop = base.CreateProperty(member, memberSerialization);
 
-        if(!prop.Writable)
+        if (!prop.Writable)
         {
             var property = member as System.Reflection.PropertyInfo;
-            if(property != null)
+            if (property != null)
             {
                 var hasPrivateSetter = property.GetSetMethod(true) != null;
                 prop.Writable = hasPrivateSetter;
