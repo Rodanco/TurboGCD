@@ -11,13 +11,13 @@
     <PackageOutputPath>$(ProjectDir)</PackageOutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Content Include="..\Data\goat.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
     </Content>
   </ItemGroup>
-
+    -->
   <ItemGroup>
     <Reference Include="InteropGenerator.Runtime">
       <HintPath>..\FFXIVClientStructs\bin\Release\InteropGenerator.Runtime.dll</HintPath>

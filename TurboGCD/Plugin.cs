@@ -1,11 +1,8 @@
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using FFXIVClientStructs.FFXIV.Common.Lua;
 using Newtonsoft.Json;
-using System;
 using System.IO;
-using System.Linq;
 using TurboGCD.Windows;
 
 namespace TurboGCD;
@@ -24,8 +21,6 @@ public sealed class Plugin : IDalamudPlugin
     public Plugin()
     {
         Services.Init(PluginInterface);
-        if (GamePad == null)
-            GamePad = new GamePad();
         Configuration = PluginInterface.GetPluginConfig() as Configuration;
         if (Configuration == null)
             Configuration = new Configuration();
@@ -40,19 +35,19 @@ public sealed class Plugin : IDalamudPlugin
                 setting.ContractResolver = new ContractResolverWithPrivates();
                 var aux = JsonConvert.DeserializeObject<Configuration>(jsonString, setting);
                 if (aux != null)
-                    Configuration = aux;                
+                    Configuration = aux;
             }
         }
 
-        Services.Command.AddHandler("/turbogcd", new Dalamud.Game.Command.CommandInfo(ToggleSettingCommand) { HelpMessage = "Open Settings for TurboGCD"});
-        Services.Command.AddHandler("/turbogcddebug", new Dalamud.Game.Command.CommandInfo(ToggleDebugCommand) { HelpMessage = "Open Debug Settings for TurboGCD"});
+        Services.Command.AddHandler("/turbogcd", new Dalamud.Game.Command.CommandInfo(ToggleSettingCommand) { HelpMessage = "Open Settings for TurboGCD" });
+        Services.Command.AddHandler("/turbogcddebug", new Dalamud.Game.Command.CommandInfo(ToggleDebugCommand) { HelpMessage = "Open Debug Settings for TurboGCD", ShowInHelp = false });
 
 
         // you might normally want to embed resources and load them from the manifest stream
-        var goatImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "goat.png");
-        if(ConfigWindow == null)
+        //var goatImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "goat.png");
+        if (ConfigWindow == null)
             ConfigWindow = new ConfigWindow(this);
-        if(debugConfigWindow == null)
+        if (debugConfigWindow == null)
             debugConfigWindow = new DebugConfigWindow(this);
 
         WindowSystem.AddWindow(ConfigWindow);
@@ -64,6 +59,9 @@ public sealed class Plugin : IDalamudPlugin
         // to toggle the display status of the configuration ui
         PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
 
+        if (GamePad == null)
+            GamePad = new GamePad();
+
         Services.ClientState.Login += ClientState_Login;
         Services.ClientState.Logout += ClientState_Logout;
         Services.ClientState.ClassJobChanged += ClassJobChanged;
@@ -74,6 +72,7 @@ public sealed class Plugin : IDalamudPlugin
             Services.Framework.GetTaskFactory().StartNew(() =>
         {
             GamePad.UpdateJobMatrix();
+            GamePad.Initialize();
         });
     }
 
@@ -90,12 +89,14 @@ public sealed class Plugin : IDalamudPlugin
     private void ClientState_Logout(int type, int code)
     {
         hasLoggedIn = false;
+        GamePad.Disable();
     }
 
     private void ClientState_Login()
     {
         hasLoggedIn = true;
         GamePad.UpdateJobMatrix();
+        GamePad.Initialize();
     }
 
     private unsafe void ClassJobChanged(uint classJobId)

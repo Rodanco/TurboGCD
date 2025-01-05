@@ -83,34 +83,19 @@ namespace TurboGCD
 
         private AddonActionCross* AddonCross {  get; set; }
 
-        public GamePad()//
+        public void Initialize()
         {
+            if (RandomRange == null)
+                RandomRange = new Random();
+
             if (gamepadPoll == null)
                 gamepadPoll = Services.Hooks.HookFromSignature<ControllerPoll>("40 55 53 57 41 54 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 44 0F 29 B4 24", GamepadPool);
             if (AddonCross == null)
                 AddonCross = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
             gamepadPoll?.Enable();
-            //if(useActionDetour == null)
-            //{
-            //    try
-            //    {
-            //        if (useActionDetour == null)
-            //            useActionDetour = Services.Hooks.HookFromSignature<ActionManager.Delegates.UseAction>("E8 ?? ?? ?? ?? B0 01 EB B6 ?? ?? ?? ?? ?? ?? ??", UseActionDetour);
-            //        useActionDetour?.Enable();
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Services.Log.Fatal($"{e.Message}\t{e.StackTrace}");
-            //    }
-            //}
 
             if (HotbarModule == null)
                 HotbarModule = RaptureHotbarModule.Instance();
-            //if (ActionMan == null)
-            //    ActionMan = ActionManager.Instance();
-
-            if (RandomRange == null)
-                RandomRange = new Random();
         }
 
         public void UpdateJobMatrix(JobID jobIndex = JobID.None)//
@@ -122,20 +107,6 @@ namespace TurboGCD
                 Services.PrintInfo($"Updating job matrix to {jobIndex}");
             }
             gcdsToCheck = JobStuff.RequestActionsFromJobId(jobIndex);
-            //var possibleActions = JobStuff.RequestActionsFromJobId(jobIndex);
-            //var crossBars = HotbarModule->CrossHotbars;
-            //int lengthBars = crossBars.Length;
-            //possiblesInputs = new bool[lengthBars, 16];
-            //for(int barIndex = 0; barIndex < lengthBars; barIndex++)
-            //{
-            //    var slots = crossBars[barIndex].Slots;
-            //    int lengthSlots = slots.Length;
-            //    for(int slotIndex = 0; slotIndex < lengthSlots; slotIndex++)
-            //    {
-            //        var slot = slots[slotIndex];
-            //        possiblesInputs[barIndex, slotIndex] = slot.ApparentSlotType == RaptureHotbarModule.HotbarSlotType.Action && possibleActions.Contains(slot.ApparentActionId);
-            //    }
-            //}
         }
 
         private int GamepadPool(IntPtr requestInput)
