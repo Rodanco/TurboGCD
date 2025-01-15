@@ -14,8 +14,8 @@
         "DalamudApiLevel": 11,
         "LoadPriority": 0,
         "Punchline": "Turbo actions for your Gamepad",
-        "DownloadLinkInstall": "https://github.com/Rodanco/TurboGCD/releases/download/0.0.2/latest.zip",
-        "DownloadLinkTesting": "https://github.com/Rodanco/TurboGCD/releases/download/0.0.2/latest.zip",
-        "DownloadLinkUpdate": "https://github.com/Rodanco/TurboGCD/releases/download/0.0.2/latest.zip"
+        "DownloadLinkInstall": "https://github.com/Rodanco/TurboGCD/releases/download/0.0.3/latest.zip",
+        "DownloadLinkTesting": "https://github.com/Rodanco/TurboGCD/releases/download/0.0.3/latest.zip",
+        "DownloadLinkUpdate": "https://github.com/Rodanco/TurboGCD/releases/download/0.0.3/latest.zip"
     }
 ]
