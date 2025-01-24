@@ -3,12 +3,14 @@
   <Import Project="Dalamud.Plugin.Bootstrap.targets" />
 
   <PropertyGroup>
-    <Version>0.0.2</Version>
-    <Description>A sample plugin.</Description>
-    <PackageProjectUrl>https://github.com/goatcorp/SamplePlugin</PackageProjectUrl>
+    <Version>0.0.3</Version>
+    <Description>A plugin that allows you use Turbo Mode* for your gamepad.\n*You hold a button and keep firing it.</Description>
+    <PackageProjectUrl>https://github.com/Rodanco/TurboGCD/</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
     <PackageOutputPath>$(ProjectDir)</PackageOutputPath>
+    <FileVersion>0.0.3</FileVersion>
+    <AssemblyVersion>0.0.3</AssemblyVersion>
   </PropertyGroup>
 
   <!--<ItemGroup>
