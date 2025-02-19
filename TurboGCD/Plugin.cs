@@ -17,7 +17,6 @@ public sealed class Plugin : IDalamudPlugin
     private DebugConfigWindow debugConfigWindow { get; init; }
     public static GamePad GamePad { get; private set; }
     private bool hasLoggedIn { get; set; }
-
     public Plugin()
     {
         Services.Init(PluginInterface);
@@ -61,7 +60,7 @@ public sealed class Plugin : IDalamudPlugin
 
         if (GamePad == null)
             GamePad = new GamePad();
-
+        Services.ClientState.TerritoryChanged += ClientState_TerritoryChange;
         Services.ClientState.Login += ClientState_Login;
         Services.ClientState.Logout += ClientState_Logout;
         Services.ClientState.ClassJobChanged += ClassJobChanged;
@@ -74,6 +73,11 @@ public sealed class Plugin : IDalamudPlugin
             GamePad.UpdateJobMatrix();
             GamePad.Initialize();
         });
+    }
+
+    private void ClientState_TerritoryChange(ushort level)
+    {
+        GamePad.RecheckStuff();
     }
 
     private void ToggleDebugCommand(string command, string arguments)
@@ -90,6 +94,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         hasLoggedIn = false;
         GamePad.Disable();
+        Services.PrintInfo("Logging out");
     }
 
     private void ClientState_Login()
@@ -97,6 +102,9 @@ public sealed class Plugin : IDalamudPlugin
         hasLoggedIn = true;
         GamePad.UpdateJobMatrix();
         GamePad.Initialize();
+        GamePad.Enable();
+
+        Services.PrintInfo("Logging in");
     }
 
     private unsafe void ClassJobChanged(uint classJobId)
@@ -104,6 +112,7 @@ public sealed class Plugin : IDalamudPlugin
         if (!hasLoggedIn)
             return;
         GamePad.UpdateJobMatrix((JobID)classJobId);
+        GamePad.Enable();
         //Services.PrintInfo($"{classJobId} {Services.ClientState.LocalPlayer.ClassJob.Value.RowId} {Services.ClientState.LocalPlayer.ClassJob.Value.NameEnglish}\tD-Pad Up L2 slot action {FFXIVClientStructs.FFXIV.Client.UI.Misc.RaptureHotbarModule.Instance()->CrossHotbars[0].Slots[1].ApparentActionId}");
 
     }

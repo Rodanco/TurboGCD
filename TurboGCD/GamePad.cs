@@ -78,7 +78,7 @@ namespace TurboGCD
         private GamepadButtons lastButtonHold { get; set; }
         private uint lastActionHold { get; set; }
 
-        private AddonActionCross* AddonCross { get; set; }
+        public AddonActionCross* AddonCross { get; set; }
 
         public void Initialize()
         {
@@ -90,7 +90,7 @@ namespace TurboGCD
             if (AddonCross == null)
                 AddonCross = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
             gamepadPoll?.Enable();
-
+            
             if (HotbarModule == null)
                 HotbarModule = RaptureHotbarModule.Instance();
         }
@@ -140,7 +140,7 @@ namespace TurboGCD
                     //crossBarIndex = 1;
                     if (AddonCross->ExpandedHoldMapValue < 1u)
                     {
-                        Services.PrintFatal("Expanded Hold Map Value = 0");
+                        Services.PrintFatal($"Expanded Hold Map Value = 0 ({AddonCross->ExpandedHoldMapValue})");
                         return gamepadPoll.Original(requestInput);
                     }
                     crossBarIndex = (int)((AddonCross->ExpandedHoldMapValue - 1u) / 2);
@@ -149,7 +149,7 @@ namespace TurboGCD
                 {
                     if (AddonCross->ExpandedHoldMapValue < 1u)
                     {
-                        Services.PrintFatal("Expanded Hold Map Value = 0");
+                        Services.PrintFatal($"Expanded Hold Map Value = 0 ({AddonCross->ExpandedHoldMapValue})");
                         return gamepadPoll.Original(requestInput);
                     }
                     crossBarIndex = (int)((AddonCross->ExpandedHoldMapValue - 1u) / 2);
@@ -160,6 +160,8 @@ namespace TurboGCD
                     return gamepadPoll.Original(requestInput);
                 }
                 Services.PrintInfo($"Crossbar Number {crossBarIndex + 1}");
+                int indexToPrint = (HotbarModule != null && HotbarModule->CrossHotbars != null) ? HotbarModule->CrossHotbars.Length : -1;
+                Services.PrintInfo($"HotbarModule {HotbarModule != null}   CrossHotBars.Length { indexToPrint}");
                 int sumButtom = (flags & RightSide) > 0 ? ButtonsLength : 0;
                 var crossbar = HotbarModule->CrossHotbars[crossBarIndex];
                 for (int i = 0; i < ButtonsLength; i++)
@@ -213,19 +215,39 @@ namespace TurboGCD
         public void Enable()
         {
             gamepadPoll?.Enable();
+            var other = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
+            if (AddonCross == null || AddonCross->IsVisible != other->IsVisible)
+                AddonCross = other;
+            Services.PrintInfo("Enabling GamePad.cs");
             //useActionDetour?.Enable();
         }
 
         public void Disable()
         {
             gamepadPoll?.Disable();
+            Services.PrintInfo("Disabling GamePad.cs");
             //useActionDetour?.Disable();
         }
 
         public void Dispose()
         {
             gamepadPoll?.Dispose();
+            Services.PrintInfo("Disposing GamePad.cs");
             //useActionDetour?.Dispose();
+        }
+
+        internal void RecheckStuff()
+        {
+            if (HotbarModule == null)
+                HotbarModule = RaptureHotbarModule.Instance();
+            if (gamepadPoll == null)
+                gamepadPoll = Services.Hooks.HookFromSignature<ControllerPoll>("40 55 53 57 41 54 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 44 0F 29 B4 24", GamepadPool);
+            var addon = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
+            if (AddonCross == null || AddonCross != addon)
+            {
+                AddonCross = addon;
+                Services.PrintInfo($"Had to update AddonCross");
+            }
         }
     }
 }
