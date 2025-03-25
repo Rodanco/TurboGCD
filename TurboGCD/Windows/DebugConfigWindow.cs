@@ -1,8 +1,9 @@
-using Dalamud.Game.Config;
-using Dalamud.Interface.Windowing;
-using ImGuiNET;
-using Lumina.Excel.Sheets;
 using System;
+using System.Collections;
+using System.Linq;
+using Dalamud.Interface.Windowing;
+using Dalamud.Plugin;
+using ImGuiNET;
 
 namespace TurboGCD.Windows
 {
@@ -12,6 +13,7 @@ namespace TurboGCD.Windows
         public static bool PrintLogs => printLogs;
         public DebugConfigWindow(Plugin plugin) : base("TurboGCD debug config window")
         {
+
         }
 
         public void Dispose()
@@ -28,7 +30,7 @@ namespace TurboGCD.Windows
                     DoThing();
                 }
             }
-            catch (System.Exception ex) 
+            catch (System.Exception ex)
             {
                 Services.PrintFatal(ex.Message, true);
             }
@@ -36,9 +38,6 @@ namespace TurboGCD.Windows
 
         private unsafe void DoThing()
         {
-            var addon = (FFXIVClientStructs.FFXIV.Client.UI.AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
-            var aux = Services.GameConfig.TryGet(UiConfigOption.HotbarWXHBSetLeft, out uint value);
-            Services.Log.Info($"{addon->RaptureHotbarId.ToString()} {addon->ExpandedHoldMapValue} {aux}? {value}");
         }
     }
 }

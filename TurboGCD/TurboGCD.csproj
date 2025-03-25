@@ -3,14 +3,15 @@
   <Import Project="Dalamud.Plugin.Bootstrap.targets" />
 
   <PropertyGroup>
-    <Version>0.0.4</Version>
+    <Version>0.0.5</Version>
     <Description>A plugin that allows you use Turbo Mode* for your gamepad.\n*You hold a button and keep firing it.</Description>
     <PackageProjectUrl>https://github.com/Rodanco/TurboGCD/</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
     <PackageOutputPath>$(ProjectDir)</PackageOutputPath>
-    <FileVersion>0.0.4</FileVersion>
-    <AssemblyVersion>0.0.4</AssemblyVersion>
+    <FileVersion>0.0.5</FileVersion>
+    <AssemblyVersion>0.0.5</AssemblyVersion>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
   </PropertyGroup>
 
   <!--<ItemGroup>
@@ -21,8 +22,20 @@
   </ItemGroup>
     -->
   <ItemGroup>
+    <Reference Include="ECommons">
+      <HintPath>..\..\Moodles\Moodles\bin\Release\ECommons.dll</HintPath>
+    </Reference>
     <Reference Include="InteropGenerator.Runtime">
       <HintPath>..\FFXIVClientStructs\bin\Release\InteropGenerator.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Moodles">
+      <HintPath>..\..\Moodles\Moodles\bin\Release\Moodles.dll</HintPath>
+    </Reference>
+    <Reference Include="OtterGui">
+      <HintPath>..\..\Moodles\OtterGui\bin\Release\OtterGui.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="DalamudPackager" Version="12.0.0" />
   </ItemGroup>
 </Project>
