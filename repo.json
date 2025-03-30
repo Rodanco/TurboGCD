@@ -3,7 +3,7 @@
         "Author": "Rodanco",
         "Name": "Turbo GCD",
         "InternalName": "TurboGCD",
-        "AssemblyVersion": "0.0.5.0",
+        "AssemblyVersion": "0.0.6.0",
         "Description": "A plugin that allows you use Turbo Mode* for your gamepad.\n*You hold a button and keep firing it.",
         "ApplicableVersion": "any",
         "RepoUrl": "https://github.com/Rodanco/TurboGCD",

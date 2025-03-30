@@ -9,10 +9,16 @@
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
     <PackageOutputPath>$(ProjectDir)</PackageOutputPath>
-    <FileVersion>0.0.5</FileVersion>
-    <AssemblyVersion>0.0.5</AssemblyVersion>
+    <FileVersion>0.0.6</FileVersion>
+    <AssemblyVersion>0.0.6</AssemblyVersion>
     <TargetFramework>net9.0-windows7.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="InteropGenerator.Runtime">
+      <HintPath>..\..\FFXIVClientStructs\bin\Release\InteropGenerator.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
   <!--<ItemGroup>
     <Content Include="..\Data\goat.png">
@@ -21,20 +27,6 @@
     </Content>
   </ItemGroup>
     -->
-  <ItemGroup>
-    <Reference Include="ECommons">
-      <HintPath>..\..\Moodles\Moodles\bin\Release\ECommons.dll</HintPath>
-    </Reference>
-    <Reference Include="InteropGenerator.Runtime">
-      <HintPath>..\FFXIVClientStructs\bin\Release\InteropGenerator.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Moodles">
-      <HintPath>..\..\Moodles\Moodles\bin\Release\Moodles.dll</HintPath>
-    </Reference>
-    <Reference Include="OtterGui">
-      <HintPath>..\..\Moodles\OtterGui\bin\Release\OtterGui.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Update="DalamudPackager" Version="12.0.0" />
   </ItemGroup>
