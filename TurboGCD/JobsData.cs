@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -902,6 +903,22 @@ namespace TurboGCD
                 [Order(27)] Stronghold = 198, // LB2, instant, range 0, AOE 50 circle, targets=self, animLock=3.860
                 [Order(28)] LastBastion = 199, // LB3, instant, range 0, AOE 50 circle, targets=self, animLock=3.860s?
             }
+            public enum PVP : uint
+            {
+                FastBlade = 29058,
+                RiotBlade = 29059,
+                RoyalAuthority = 29060,
+                ShieldSmite = 41430,
+                HolySpirit = 29062,
+                Imperator = 41431,
+                Intervene = 29065,
+                HolySheltron = 29067,
+                Guardian = 29066,
+                Phalanx = 29069,
+                BladeOfFaith = 29071,
+                BladeOfTruth = 29072,
+                BladeOfValor = 29073
+            }
         }
 
         namespace WAR
@@ -955,6 +972,20 @@ namespace TurboGCD
                 [Order(25)] Stronghold = 198, // LB2, instant, range 0, AOE 50 circle, targets=self, animLock=3.860
                 [Order(26)] LandWaker = 4240, // LB3, instant, range 0, AOE 50 circle, targets=Self, animLock=3.860
             }   
+
+            public enum PVP : uint
+            {
+                HeavySwing = 29074u,
+                Maim = 29075u,
+                StormsPath = 29076u,
+                PrimalRend = 29084u,
+                Onslaught = 29079u,
+                Orogeny = 29080u,
+                Blota = 29081u,
+                Bloodwhetting = 29082u,
+                PrimalScream = 29083u,
+                PrimalWrath = 41433u
+            }
         }       
 
         namespace GNB
@@ -1012,6 +1043,28 @@ namespace TurboGCD
                 [Order(29)] Stronghold = 198, // LB2, instant, range 0, AOE 50 circle, targets=self, animLock=3.860
                 [Order(30)] GunmetalSoul = 17105, // LB3, instant, range 0, AOE 50 circle, targets=self, animLock=3.860
             }
+
+            public enum PVP : uint
+            {
+                KeenEdge = 29098,
+                BrutalShell = 29099,
+                SolidBarrel = 29100,
+                BurstStrike = 29101,
+                GnashingFang = 29102,
+                SavageClaw = 29103,
+                WickedTalon = 29104,
+                Continuation = 29106,
+                JugularRip = 29108,
+                AbdomenTear = 29109,
+                EyeGouge = 29110,
+                RoughDivide = 29123,
+                RelentlessRush = 29130,
+                TerminalTrigger = 29131,
+                FatedCircle = 41511,
+                FatedBrand = 41442,
+                BlastingZone = 29128,
+                HeartOfCorundum = 41443
+            }
         }
 
         namespace DRK
@@ -1065,6 +1118,20 @@ namespace TurboGCD
                 [Order(28)] ShieldWall = 197, // LB1, instant, range 0, AOE 50 circle, targets=self, animLock=1.930
                 [Order(29)] Stronghold = 198, // LB2, instant, range 0, AOE 50 circle, targets=self, animLock=3.860
                 [Order(30)] DarkForce = 4241, // LB3, instant, range 0, AOE 50 circle, targets=Self, animLock=3.860s?
+            }
+            public enum PVP : uint
+            {
+                HardSlash = 29085,
+                SyphonStrike = 29086,
+                Souleater = 29087,
+                Shadowbringer = 29091,
+                Plunge = 29092,
+                BlackestNight = 29093,
+                SaltedEarth = 29094,
+                Bloodspiller = 29088,
+                SaltAndDarkness = 29095,
+                Impalement = 41438,
+                Eventide = 29097
             }
         }
 
@@ -1123,6 +1190,19 @@ namespace TurboGCD
                 [Order(21)] BreathOfTheEarth = 207, // LB2, 2.0s cast, range 0, AOE 50 circle, targets=self, castAnimLock=5.130
                 [Order(22)] TechneMakre = 24859, // LB3, 2.0s cast, range 0, AOE 50 circle, targets=Self, animLock=8.100s?
             }   
+            public enum PVP : uint
+            {
+                Dosis = 29256,
+                Phlegma = 29259,
+                Pneuma = 29260,
+                Eukrasia = 29258,
+                Icarus = 29261,
+                Toxikon = 29262,
+                Kardia = 29264,
+                EukrasianDosis = 29257,
+                Toxicon2 = 29263,
+                Psyche = 41658
+            }
         }       
                 
         namespace WHM
@@ -1174,6 +1254,17 @@ namespace TurboGCD
                 [Order(14)] BreathOfTheEarth = 207, // LB2, 2.0s cast, range 0, AOE 50 circle, targets=self, castAnimLock=5.130
                 [Order(15)] PulseOfLife = 208, // LB3, 2.0s cast, range 0, AOE 50 circle, targets=Self, animLock=8.100s?
             }   
+            public enum PVP : uint 
+            {
+                Glare = 29223,
+                Cure2 = 29224,
+                Cure3 = 29225,
+                AfflatusMisery = 29226,
+                Aquaveil = 29227,
+                MiracleOfNature = 29228,
+                SeraphStrike = 29229,
+                AfflatusPurgation = 29230
+            }
         }  
 
         namespace SCH
@@ -1230,6 +1321,15 @@ namespace TurboGCD
                 [Order(23)] HealingWind = 206, // LB1, 2.0s cast, range 0, AOE 50 circle, targets=self, castAnimLock=2.100
                 [Order(24)] BreathOfTheEarth = 207, // LB2, 2.0s cast, range 0, AOE 50 circle, targets=self, castAnimLock=5.130
                 [Order(25)] AngelFeathers = 4247, // LB3, 2.0s cast, range 0, AOE 50 circle, targets=Self, animLock=8.100s?
+            }
+            public enum PVP : uint
+            {
+                Broil = 29231,
+                Adloquilum = 29232,
+                Biolysis = 29233,
+                DeploymentTactics = 29234,
+                Expedient = 29236,
+                ChainStratagem = 29716
             }
         }
                 
@@ -1294,6 +1394,21 @@ namespace TurboGCD
                 [Order(30)] BreathOfTheEarth = 207, // LB2, 2.0s cast, range 0, AOE 50 circle, targets=self, castAnimLock=5.130
                 [Order(31)] AstralStasis = 4248, // LB3, 2.0s cast, range 0, AOE 50 circle, targets=Self, animLock=8.100s?
             }
+            public enum PVP : uint
+            {
+                Malefic = 29242,
+                AspectedBenefic = 29243,
+                Gravity = 29244,
+                DoubleCast = 29245,
+                DoubleMalefic = 29246,
+                NocturnalBenefic = 29247,
+                DoubleGravity = 29248,
+                Draw = 29249,
+                Macrocosmos = 29253,
+                Microcosmos = 29254,
+                MinorArcana = 41503,
+                Epicycle = 41506
+            }
         }
 
         namespace BRD
@@ -1341,6 +1456,18 @@ namespace TurboGCD
                 [Order(19)] Desperado = 4239, // LB2, 3.0s cast, range 30, AOE 30+R width 5 rect, targets=hostile, castAnimLock=3.100
                 [Order(20)] SagittariusArrow = 4244, // LB3, 4.5s cast, range 30, AOE 30+R width 8 rect, targets=Hostile, animLock=3.700s?
             }   
+            public enum PVP : uint
+            {
+                PowerfulShot = 29391,
+                ApexArrow = 29393,
+                SilentNocturne = 29395,
+                RepellingShot = 29399,
+                WardensPaean = 29400,
+                PitchPerfect = 29392,
+                BlastArrow = 29394,
+                HarmonicArrow = 41464,
+                FinalFantasia = 29401
+            }
         }     
 
         namespace DNC
@@ -1399,6 +1526,23 @@ namespace TurboGCD
                 [Order(19)] Desperado = 4239, // LB2, 3.0s cast, range 30, AOE 30+R width 5 rect, targets=hostile, castAnimLock=3.100
                 [Order(20)] CrimsonLotus = 17106, // LB3, 4.5s cast, range 30, AOE 30+R width 8 rect, targets=hostile, animLock=???, castAnimLock=3.700
             }    
+            public enum PVP : uint
+            {
+                FountainCombo = 54,
+                Cascade = 29416,
+                Fountain = 29417,
+                ReverseCascade = 29418,
+                Fountainfall = 29419,
+                SaberDance = 29420,
+                StarfallDance = 29421,
+                HoningDance = 29422,
+                HoningOvation = 29470,
+                FanDance = 29428,
+                CuringWaltz = 29429,
+                EnAvant = 29430,
+                ClosedPosition = 29431,
+                Contradance = 29432
+            }
         }        
          
         namespace MCH
@@ -1446,6 +1590,22 @@ namespace TurboGCD
                 [Order(19)] Desperado = 4239, // LB2, 3.0s cast, range 30, AOE 30+R width 5 rect, targets=hostile, castAnimLock=3.100
                 [Order(20)] SatelliteBeam = 4245, // LB3, 4.5s cast, range 30, AOE 30+R width 8 rect, targets=Hostile, animLock=3.700s?
             }   
+            public enum PVP : uint
+            {
+                BlastCharge = 29402,
+                BlazingShot = 41468,
+                Scattergun = 29404,
+                Drill = 29405,
+                BioBlaster = 29406,
+                AirAnchor = 29407,
+                ChainSaw = 29408,
+                Wildfire = 29409,
+                BishopTurret = 29412,
+                AetherMortar = 29413,
+                Analysis = 29414,
+                MarksmanSpite = 29415,
+                FullMetalField = 41469
+            }
         }  
 
         namespace BLM
@@ -1494,6 +1654,28 @@ namespace TurboGCD
                 [Order(23)] Starstorm = 204, // LB2, 3.0s cast, range 25, AOE 10 circle, targets=area, castAnimLock=5.100
                 [Order(24)]  Meteor = 205, // LB3, 4.5s cast, range 25, AOE 15 circle, targets=Area, animLock=8.100s?
             }    
+            public enum PVP
+            {
+                Fire = 29649,
+                Blizzard = 29653,
+                Burst = 29657,
+                Paradox = 29663,
+                AetherialManipulation = 29660,
+                Fire3 = 30896,
+                Fire4 = 29650,
+                Flare = 29651,
+                Blizzard3 = 30897,
+                Blizzard4 = 29654,
+                Freeze = 29655,
+                Lethargy = 41510,
+                HighFire2 = 41473,
+                HighBlizzard2 = 41474,
+                ElementalWeave = 41475,
+                FlareStar = 41480,
+                FrostStar = 41481,
+                SoulResonance = 29662,
+                Xenoglossy = 29658
+            }
         }        
           
         namespace PCT
@@ -1553,6 +1735,19 @@ namespace TurboGCD
                 [Order(19)] ChromaticFantasy = 34867, // LB3, 4.5s cast, range 25, AOE 15 circle, targets=Area
 
             }   
+            public enum PVP : uint
+            {
+                FireInRed = 39191,
+                AeroInGreen = 39192,
+                WaterInBlue = 39193,
+                HolyInWhite = 39198,
+                CreatureMotif = 39204,
+                LivingMuse = 39209,
+                TemperaCoat = 39211,
+                SubtractivePalette = 39213,
+                StarPrism = 39216,
+                MogOfTheAges = 39782
+            }
         }       
                            
         namespace RDM
@@ -1610,6 +1805,23 @@ namespace TurboGCD
                 [Order(14)] Starstorm = 204, // LB2, 3.0s cast, range 25, AOE 10 circle, targets=area, castAnimLock=5.100
                 [Order(15)] VermilionScourge = 7862, // LB3, 4.5s cast, range 25, AOE 15 circle, targets=Area, animLock=8.100s?
             }    
+            public enum PVP : uint
+            {
+                EnchantedRiposte = 41488,
+                Resolution = 41492,
+                CorpsACorps = 29699,
+                Displacement = 29700,
+                EnchantedZwerchhau = 41489,
+                EnchantedRedoublement = 41490,
+                SouthernCross = 41498,
+                Embolden = 41494,
+                Forte = 41496,
+                Scorch = 41491,
+                GrandImpact = 41487,
+                Jolt3 = 41486,
+                ViceOfThorns = 41493,
+                Prefulgence = 41495
+            }
         }        
         
         namespace SMN
@@ -1695,6 +1907,27 @@ namespace TurboGCD
                 [Order(23)] Starstorm = 204, // LB2, 3.0s cast, range 25, AOE 10 circle, targets=area, castAnimLock=5.100
                 [Order(24)] Teraflare = 4246, // LB3, 4.5s cast (0 charges), range 25, AOE 15 circle, targets=Area, animLock=8.100s?
             }   
+            public enum PVP : uint
+            {
+                Ruin3 = 29664,
+                AstralImpulse = 29665,
+                FountainOfFire = 29666,
+                CrimsonCyclone = 29667,
+                CrimsonStrike = 29668,
+                Slipstream = 29669,
+                RadiantAegis = 29670,
+                MountainBuster = 29671,
+                Necrotize = 41483,
+                DeathFlare = 41484,
+                Megaflare = 29675,          // not used
+                Wyrmwave = 29676,           // not used
+                AkhMorn = 29677,            // not used
+                EnkindlePhoenix = 29679,       
+                ScarletFlame = 29681,       // not used
+                Revelation = 29682,         // not used
+                Ruin4 = 41482,
+                BrandofPurgatory = 41485
+            }
         }       
          
         namespace MNK
@@ -1752,6 +1985,24 @@ namespace TurboGCD
                 [Order(21)] Bladedance = 201, // LB2, 3.0s cast, range 8, single-target, targets=hostile, castAnimLock=3.860
                 [Order(22)] FinalHeaven = 202, // LB3, 4.5s cast, range 8, single-target, targets=hostile, animLock=???, castAnimLock=3.700
             }   
+            public enum PVP : uint
+            {
+                PhantomRushCombo = 55,
+                DragonKick = 29475,
+                TwinSnakes = 29476,
+                Demolish = 29477,
+                PhantomRush = 29478,
+                RisingPhoenix = 29481,
+                RiddleOfEarth = 29482,
+                ThunderClap = 29484,
+                EarthsReply = 29483,
+                Meteordrive = 29485,
+                WindsReply = 41509,
+                FlintsReply = 41447,
+                LeapingOpo = 41444,
+                RisingRaptor = 41445,
+                PouncingCoeurl = 41446
+            }
         }       
         
         namespace SAM
@@ -1807,6 +2058,27 @@ namespace TurboGCD
                 [Order(18)] Bladedance = 201, // LB2, 3.0s cast, range 8, single-target, targets=hostile, castAnimLock=3.860
                 [Order(19)] DoomOfTheLiving = 7861, // LB3, 4.5s cast, range 8, single-target, targets=Hostile, animLock=3.700s?
             }    
+            public enum PVP : uint
+            {
+                KashaCombo = 58,
+                Yukikaze = 29523,
+                Gekko = 29524,
+                Kasha = 29525,
+                Hyosetsu = 29526,
+                Mangetsu = 29527,
+                Oka = 29528,
+                OgiNamikiri = 29530,
+                Soten = 29532,
+                Chiten = 29533,
+                Mineuchi = 29535,
+                MeikyoShisui = 29536,
+                Midare = 29529,
+                Kaeshi = 29531,
+                Zantetsuken = 29537,
+                TendoSetsugekka = 41454,
+                TendoKaeshiSetsugekka = 41455,
+                Zanshin = 41577
+            }
         }        
         
         namespace NIN
@@ -1878,6 +2150,27 @@ namespace TurboGCD
                 [Order(47)] Bladedance = 201, // LB2, 3.0s cast, range 8, single-target, targets=hostile, castAnimLock=3.860
                 [Order(48)] Chimatsuri = 4243, // LB3, 4.5s cast (0 charges), range 8, single-target, targets=Hostile, animLock=3.700s?
             }
+            public enum PVP : uint
+            {
+                SpinningEdge = 29500,
+                GustSlash = 29501,
+                AeolianEdge = 29502,
+                FumaShuriken = 29505,
+                Dokumori = 41451,
+                ThreeMudra = 29507,
+                Bunshin = 29511,
+                Shukuchi = 29513,
+                SeitonTenchu = 29515,
+                ForkedRaiju = 29510,
+                FleetingRaiju = 29707,
+                HyoshoRanryu = 29506,
+                GokaMekkyaku = 29504,
+                Meisui = 29508,
+                Huton = 29512,
+                Doton = 29514,
+                Assassinate = 29503,
+                ZeshoMeppo = 41452
+            }
         }
 
         namespace VPR
@@ -1939,6 +2232,37 @@ namespace TurboGCD
                 [Order(22)] Bladedance = 201, // LB2, 3.0s cast, range 8, single-target, targets=hostile, castAnimLock=3.860
                 [Order(23)] WorldSwallower = 34866, // LB3, 4.5s cast, range 8, single-target, targets=Hostile
             }   
+            public enum PVP : uint
+            {
+                SteelFangs = 39157,
+                HuntersSting = 39159,
+                BarbarousSlice = 39161,
+                PiercingFangs = 39158,
+                SwiftskinsSting = 39160,
+                RavenousBite = 39163,
+                SanguineFeast = 39167,
+                Bloodcoil = 39166,
+                UncoiledFury = 39168,
+                SerpentsTail = 39183,
+                FirstGeneration = 39169,
+                SecondGeneration = 39170,
+                ThirdGeneration = 39171,
+                FourthGeneration = 39172,
+                Ouroboros = 39173,
+                DeathRattle = 39174,
+                TwinfangBite = 39175,
+                TwinbloodBite = 39176,
+                UncoiledTwinfang = 39177,
+                UncoiledTwinblood = 39178,
+                FirstLegacy = 39179,
+                SecondLegacy = 39180,
+                ThirdLegacy = 39181,
+                FourthLegacy = 39182,
+                Slither = 39184,
+                SnakeScales = 39185,
+                Backlash = 39186,
+                RattlingCoil = 39189
+            }
         }
 
         namespace DRG
@@ -1988,6 +2312,25 @@ namespace TurboGCD
                 [Order(19)] Bladedance = 201, // LB2, 3.0s cast, range 8, single-target, targets=hostile, castAnimLock=3.860
                 [Order(20)] DragonsongDive = 4242, // LB3, 4.5s cast (0 charges), range 8, single-target, targets=Hostile, animLock=3.700s?
             }   
+            public enum PVP : uint
+            {
+                WheelingThrustCombo = 56,
+                RaidenThrust = 29486,
+                FangAndClaw = 29487,
+                WheelingThrust = 29488,
+                ChaoticSpring = 29490,
+                Geirskogul = 29491,
+                HighJump = 29493,
+                ElusiveJump = 29494,
+                WyrmwindThrust = 29495,
+                HorridRoar = 29496,
+                HeavensThrust = 29489,
+                Nastrond = 29492,
+                Purify = 29056,
+                Guard = 29054,
+                Drakesbane = 41449,
+                Starcross = 41450
+            }
         }       
                             
         namespace RPR
@@ -2042,6 +2385,22 @@ namespace TurboGCD
                 [Order(20)] Bladedance = 201, // LB2, 3.0s cast, range 8, single-target, targets=hostile, castAnimLock=3.860
                 [Order(21)] TheEnd = 24858, // LB3, 4.5s cast, range 8, single-target, targets=Hostile, animLock=3.700s?
             }   
+            public enum PVP : uint
+            {
+                Slice = 29538,
+                WaxingSlice = 29539,
+                InfernalSlice = 29540,
+                HarvestMoon = 29545,
+                PlentifulHarvest = 29546,
+                GrimSwathe = 29547,
+                LemuresSlice = 29548,
+                DeathWarrant = 29549,
+                ArcaneCrest = 29552,
+                HellsIngress = 29550,
+                Regress = 29551,
+                Communio = 29554,
+                TenebraeLemurum = 29553
+            }
         }       
     }           
 }

@@ -3,14 +3,14 @@
   <Import Project="Dalamud.Plugin.Bootstrap.targets" />
 
   <PropertyGroup>
-    <Version>0.0.5</Version>
+    <Version>0.0.7</Version>
     <Description>A plugin that allows you use Turbo Mode* for your gamepad.\n*You hold a button and keep firing it.</Description>
     <PackageProjectUrl>https://github.com/Rodanco/TurboGCD/</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
     <PackageOutputPath>$(ProjectDir)</PackageOutputPath>
-    <FileVersion>0.0.6</FileVersion>
-    <AssemblyVersion>0.0.6</AssemblyVersion>
+    <FileVersion>0.0.7</FileVersion>
+    <AssemblyVersion>0.0.7</AssemblyVersion>
     <TargetFramework>net9.0-windows7.0</TargetFramework>
   </PropertyGroup>
 

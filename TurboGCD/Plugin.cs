@@ -13,7 +13,7 @@ public sealed class Plugin : IDalamudPlugin
     public Configuration Configuration { get; init; }
 
     public readonly WindowSystem WindowSystem = new("TurboGCD");
-    private ConfigWindow ConfigWindow { get; init; }
+    private NewConfigWindow ConfigWindow { get; init; }
     private DebugConfigWindow debugConfigWindow { get; init; }
     public static GamePad GamePad { get; private set; }
     private bool hasLoggedIn { get; set; }
@@ -45,7 +45,7 @@ public sealed class Plugin : IDalamudPlugin
         // you might normally want to embed resources and load them from the manifest stream
         //var goatImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "goat.png");
         if (ConfigWindow == null)
-            ConfigWindow = new ConfigWindow(this);
+            ConfigWindow = new NewConfigWindow(this);
         if (debugConfigWindow == null)
             debugConfigWindow = new DebugConfigWindow(this);
 
@@ -111,7 +111,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         if (!hasLoggedIn)
             return;
-        GamePad.UpdateJobMatrix((JobID)classJobId);
+        GamePad.UpdateJobMatrix((JobID)classJobId, Services.GlobalConfiguration.GetIsEnabledJob((JobID)classJobId));
         GamePad.Enable();
         //Services.PrintInfo($"{classJobId} {Services.ClientState.LocalPlayer.ClassJob.Value.RowId} {Services.ClientState.LocalPlayer.ClassJob.Value.NameEnglish}\tD-Pad Up L2 slot action {FFXIVClientStructs.FFXIV.Client.UI.Misc.RaptureHotbarModule.Instance()->CrossHotbars[0].Slots[1].ApparentActionId}");
 

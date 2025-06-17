@@ -1,8 +1,10 @@
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Lumina.Data.Parsing.Scd;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -383,6 +385,333 @@ public class ConfigWindow : Window, IDisposable
             data.IsSelected = false;
             JobSave.UpdatePVE(allCurrent.ToArray());
         }
+    }
+
+    sealed class ActionData
+    {
+        public readonly uint[] ActionIds;
+        public readonly ISharedImmediateTexture Texture;
+        public readonly string Name;
+        public bool IsSelected { get; set; }
+        public ActionData(uint[] ids, ISharedImmediateTexture texture, string[] names, bool selected)
+        {
+            ActionIds = ids;
+            Texture = texture;
+            var builder = new StringBuilder();
+            foreach (var n in names)
+                builder.Append(n).Append('/');
+            builder.Remove(builder.Length - 1, 1);
+            Name = builder.ToString();
+            IsSelected = selected;
+        }
+    }
+}
+
+
+public sealed class NewConfigWindow : Window, IDisposable
+{
+    private const float JobIconHeight = 21f, ActionIconHeight = 24f;
+    private Configuration Configuration;
+    private JobCollapser[] jobs_collapser;
+    bool[] jobs_selected;
+    int index_job_selected = -1;
+
+    public NewConfigWindow(Plugin plugin) : base("Turbo GCD Config Window")
+    {
+        Size = new Vector2(500, 500);
+        SizeCondition = ImGuiCond.FirstUseEver;
+
+        Configuration = plugin.Configuration;
+
+        Services.Framework.GetTaskFactory().StartNew(() =>
+        {
+            try
+            {
+                var actionSheet = Services.DataManager.GameData.GetExcelSheet<Lumina.Excel.Sheets.Action>();
+                jobs_collapser = new JobCollapser[]
+                {
+                    new (Configuration.PLDConfig, actionSheet),
+                    new (Configuration.WARConfig, actionSheet),
+                    new (Configuration.DRKConfig, actionSheet),
+                    new (Configuration.GNBConfig, actionSheet),
+                    new (Configuration.SCHConfig, actionSheet),
+                    new (Configuration.WHMConfig, actionSheet),
+                    new (Configuration.ASTConfig, actionSheet),
+                    new (Configuration.SGEConfig, actionSheet),
+                    new (Configuration.DRGConfig, actionSheet),
+                    new (Configuration.MNKConfig, actionSheet),
+                    new (Configuration.NINConfig, actionSheet),
+                    new (Configuration.SAMConfig, actionSheet),
+                    new (Configuration.RPRConfig, actionSheet),
+                    new (Configuration.VPRConfig, actionSheet),
+                    new (Configuration.BLMConfig, actionSheet),
+                    new (Configuration.SMNConfig, actionSheet),
+                    new (Configuration.RDMConfig, actionSheet),
+                    new (Configuration.PCTConfig, actionSheet),
+                    new (Configuration.BRDConfig, actionSheet),
+                    new (Configuration.MCHConfig, actionSheet),
+                    new (Configuration.DNCConfig, actionSheet),
+                };
+                jobs_selected = new bool[jobs_collapser.Length];
+            }
+            catch (System.Exception e)
+            {
+                Services.Log.Fatal($"{e.Message}\t{e.StackTrace}");
+            }
+        });
+    }
+
+    public void Dispose() { }
+
+    public override void OnClose()
+    {
+        base.OnClose();
+
+        Configuration.Save();
+    }
+
+    public override void Draw()
+    {
+        float scaleMult = ImGui.GetIO().FontGlobalScale;
+        if(ImGui.BeginChild("Jobs Buttons", new Vector2(150, ImGui.GetScrollY()), true))
+        {
+            int current_index = 0;
+            for (current_index = 0; current_index < jobs_selected.Length; current_index++)
+            {
+                switch (current_index)
+                {
+                    case 0:
+                        ImGui.Text("Tank");
+                        break;
+                    case 4:
+                        ImGui.NewLine();
+                        ImGui.Text("Healer");
+                        break;
+                    case 8:
+                        ImGui.NewLine();
+                        ImGui.Text("Melee");
+                        break;
+                    case 14:
+                        ImGui.NewLine();
+                        ImGui.Text("Caster");
+                        break;
+                    case 18:
+                        ImGui.NewLine();
+                        ImGui.Text("Ranged");
+                        break;
+                }
+                if (current_index % 2 == 1)
+                    ImGui.SameLine(0, 10);
+                
+                bool selected = ImGui.ImageButton(jobs_collapser[current_index].GetIcon(jobs_selected[current_index]), new Vector2(48, 48));
+                if (current_index + 1 >= jobs_selected.Length)
+                    continue;
+                if (selected && index_job_selected != current_index)
+                {
+                    jobs_selected[current_index] = true;
+                    Services.Log.Info($"{index_job_selected}, {current_index}");
+                    if (index_job_selected > -1)
+                        jobs_selected[index_job_selected] = false;
+                    index_job_selected = current_index;
+                }
+            }
+            ImGui.EndChild();
+        }
+        ImGui.SameLine();
+        int disableCount = 0;
+        if (ImGui.BeginChild("Jobs Actions", new Vector2(ImGui.GetWindowWidth() - 150 - ImGui.GetStyle().WindowPadding.X * 3, ImGui.GetScrollY()), true))
+        {
+            if (index_job_selected > -1)
+            {
+                var job = jobs_collapser[index_job_selected];
+                bool enabled = job.IsEnabled;
+                ImGui.Image(job.GetIcon(enabled), new Vector2(32, 32));
+                ImGui.SameLine(0, 20);
+                bool changed = ImGui.Checkbox("Is Enabled?", ref enabled);
+                job.IsEnabled = enabled;
+                if (changed && Plugin.GamePad.CurrentJob == job.JobID)
+                    Plugin.GamePad.SetEnableForCurrentJob(enabled);
+
+                if (!enabled)
+                    ImGui.BeginDisabled();
+
+                if(ImGui.BeginChild("job gcds", new Vector2(ImGui.GetColumnWidth() * .5f, ImGui.GetScrollY()), true))
+                {
+                    ImGui.SetCursorPosX((ImGui.GetColumnWidth() - ImGui.CalcTextSize("GCDs").X) * .5f);
+                    ImGui.Text("GCDs");
+                    foreach (var action in job.GCDActionsData)
+                        DrawActionData(job, action, scaleMult, ref disableCount);
+                    ImGui.EndChild();
+                }
+                ImGui.SameLine();
+                if (ImGui.BeginChild("job ogcds", new Vector2(ImGui.GetColumnWidth(), ImGui.GetScrollY()), true))
+                {
+                    ImGui.SetCursorPosX((ImGui.GetColumnWidth() - ImGui.CalcTextSize("oGCDs").X) * .5f);
+                    ImGui.Text("oGCDs");
+                    foreach (var action in job.OGCDActionsData)
+                        DrawActionData(job, action, scaleMult, ref disableCount);
+                    ImGui.EndChild();
+                }
+                if (!enabled)
+                    ImGui.EndDisabled();
+            }
+            ImGui.EndChild();
+        }
+        for (int i = 0; i < disableCount; i++)
+            ImGui.EndDisabled();
+    }
+
+    private void DrawActionData(in JobCollapser job, in ActionData action, in float scaleMult, ref int disableCount)
+    {
+        bool check = action.IsSelected;
+        ImGui.BeginDisabled(!check);
+        disableCount++;
+        ImGui.Image(action.Texture.GetWrapOrEmpty().ImGuiHandle, new(ActionIconHeight * scaleMult, ActionIconHeight * scaleMult), new(0, 0), new(1, 1));
+        ImGui.EndDisabled();
+        disableCount--;
+        ImGui.SameLine(0, 1 * ImGui.GetStyle().ItemSpacing.X);
+        if (ImGui.Checkbox(action.Name, ref check))
+        {
+            if (check)
+                job.AddAction(action);
+            else
+                job.RemoveAction(action);
+            action.IsSelected = check;
+            Configuration.Save();
+        }
+    }
+
+
+    class JobCollapser
+    {
+        public readonly TurboGCD.JobSave JobSave;
+        public readonly ISharedImmediateTexture JobIconActive, JobIconInactive;
+        public readonly uint[] defaultOGCD, defaultGCD;
+        public readonly IList<ActionData> OGCDActionsData, GCDActionsData;
+        private readonly List<uint> allCurrent;
+        public readonly JobID JobID;
+
+        public JobCollapser(TurboGCD.JobSave jobSave, Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.Action>? actionSheet)
+        {
+            JobID = jobSave.JobID;
+            JobSave = jobSave;
+            JobIconActive = Utilities.GetJobIcon(JobSave.JobID);
+            JobIconInactive = Utilities.GetJobIconSimple(JobSave.JobID);
+            defaultOGCD = JobStuff.RequestDefaultOGCD(JobSave.JobID);
+            defaultGCD = JobStuff.RequestDefaultGCD(JobSave.JobID);
+            allCurrent = new List<uint>(JobSave.PVE);
+            var ogcdList = new List<ActionData>(defaultOGCD.Length);
+            var gcdList = new List<ActionData>(defaultGCD.Length);
+            if (JobStuff.JobsEquivalentActions.TryGetValue(JobSave.JobID, out var collapsedActions))
+            {
+                List<uint> idsAlreadyAdded = new List<uint>(20);
+                foreach (var ogcd in defaultOGCD)
+                {
+                    if (idsAlreadyAdded.Contains(ogcd))
+                        continue;
+                    if (collapsedActions.TryGetValue(ogcd, out var equivalents))
+                    {
+                        bool allAdded = true;
+                        int length = equivalents.Length;
+                        List<string> names = new List<string>(length);
+                        uint icon = 0;
+                        for (int i = 0; i < length; i++)
+                        {
+                            uint id = equivalents[i];
+                            allAdded &= allCurrent.Contains(id);
+                            var action = actionSheet[id];
+                            var name = action.Name.ToString();
+                            if (!names.Contains(name))
+                                names.Add(name);
+                            icon = action.Icon;
+                        }
+                        ogcdList.Add(new ActionData(equivalents, Utilities.GetIcon(icon), names.ToArray(), allAdded));
+                        idsAlreadyAdded.AddRange(equivalents);
+                    }
+                    else
+                    {
+                        var action = actionSheet[ogcd];
+                        bool inList = JobSave.PVE.Contains(ogcd);
+                        ogcdList.Add(new ActionData(new[] { ogcd }, Utilities.GetIcon(action.Icon), new[] { action.Name.ToString() }, inList));
+                    }
+                }
+                foreach (var gcd in defaultGCD)
+                {
+                    if (idsAlreadyAdded.Contains(gcd))
+                        continue;
+                    if (collapsedActions.TryGetValue(gcd, out var equivalents))
+                    {
+                        bool allAdded = true;
+                        int length = equivalents.Length;
+                        List<string> names = new List<string>(length);
+                        uint icon = 0;
+                        for (int i = 0; i < length; i++)
+                        {
+                            uint id = equivalents[i];
+                            allAdded &= allCurrent.Contains(id);
+                            var action = actionSheet[id];
+                            var name = action.Name.ToString();
+                            if (!names.Contains(name))
+                                names.Add(name);
+                            icon = action.Icon;
+                        }
+                        gcdList.Add(new ActionData(equivalents, Utilities.GetIcon(icon), names.ToArray(), allAdded));
+                        idsAlreadyAdded.AddRange(equivalents);
+                    }
+                    else
+                    {
+                        var action = actionSheet[gcd];
+                        bool inList = JobSave.PVE.Contains(gcd);
+                        gcdList.Add(new ActionData(new[] { gcd }, Utilities.GetIcon(action.Icon), new[] { action.Name.ToString() }, inList));
+                    }
+                }
+            }
+            else
+            {
+                foreach (var ogcd in defaultOGCD)
+                {
+                    var action = actionSheet[ogcd];
+                    bool inList = JobSave.PVE.Contains(ogcd);
+                    ogcdList.Add(new ActionData(new[] { ogcd }, Utilities.GetIcon(action.Icon), new[] { action.Name.ToString() }, inList));
+                }
+                foreach (var gcd in defaultGCD)
+                {
+                    var action = actionSheet[gcd];
+                    bool inList = JobSave.PVE.Contains(gcd);
+                    gcdList.Add(new ActionData(new[] { gcd }, Utilities.GetIcon(action.Icon), new[] { action.Name.ToString() }, inList));
+                }
+            }
+            OGCDActionsData = ogcdList.ToArray();
+            GCDActionsData = gcdList.ToArray();
+        }
+
+        public IntPtr GetIcon(bool is_selected) => is_selected ? JobIconActive.GetWrapOrDefault().ImGuiHandle : JobIconInactive.GetWrapOrDefault().ImGuiHandle;
+        public void AddAction(in ActionData data)
+        {
+            var ids = data.ActionIds;
+            foreach (var id in ids)
+            {
+                if (!allCurrent.Contains(id))
+                    allCurrent.Add(id);
+            }
+            data.IsSelected = true;
+            JobSave.UpdatePVE(allCurrent.ToArray());
+        }
+
+        public void RemoveAction(in ActionData data)
+        {
+            var ids = data.ActionIds;
+            foreach (var id in ids)
+            {
+                if (allCurrent.Contains(id))
+                    allCurrent.RemoveAll(i => i == id);
+            }
+            data.IsSelected = false;
+            JobSave.UpdatePVE(allCurrent.ToArray());
+        }
+
+        public void SetIsEnabled(bool enabled) => JobSave.IsEnabled = enabled;
+        public bool IsEnabled { get => JobSave.IsEnabled; set => JobSave.IsEnabled = value; }
     }
 
     sealed class ActionData

@@ -74,7 +74,9 @@ namespace TurboGCD
         //private  bool[,] possiblesInputs;
         private int offsetCrossbar = 0;
         private uint[] gcdsToCheck { get; set; }
+        private bool is_job_enabled { get; set; } = true;
         private Random RandomRange { get; set; }
+        public JobID CurrentJob { get; private set; }
 
         private GamepadButtons lastButtonHold { get; set; }
         private uint lastActionHold { get; set; }
@@ -102,19 +104,30 @@ namespace TurboGCD
                 HotbarModule = RaptureHotbarModule.Instance();
         }
 
-        public void UpdateJobMatrix(JobID jobIndex = JobID.None)//
+        public void UpdateJobMatrix(JobID jobIndex = JobID.None, bool is_enabled = true)//
         {
             Services.PrintInfo($"Starting updating job matrix with jobIndex {jobIndex}");
+            is_job_enabled = is_enabled;
             if (jobIndex == JobID.None)
             {
                 jobIndex = (JobID)Services.ClientState.LocalPlayer.ClassJob.RowId;
+                is_job_enabled = Services.GlobalConfiguration.GetIsEnabledJob(jobIndex);
                 Services.PrintInfo($"Updating job matrix to {jobIndex}");
             }
+            CurrentJob = jobIndex;
             gcdsToCheck = JobStuff.RequestActionsFromJobId(jobIndex);
+        }
+
+        public void SetEnableForCurrentJob(bool is_enabled)
+        {
+            is_job_enabled = is_enabled;
+            Services.GlobalConfiguration.SetIsEnabledJob(CurrentJob, is_enabled);
         }
 
         private int GamepadPool(IntPtr requestInput)
         {
+            if (!is_job_enabled)
+                return gamepadPoll!.Original(requestInput);
             int crossBarIndex = 0, buttonIndex = 0;
             try
             {

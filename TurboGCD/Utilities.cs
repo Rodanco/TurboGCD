@@ -34,6 +34,18 @@ namespace TurboGCD
                 iconID = 62146u;
             return GetIcon(iconID);
         }
+        public static ISharedImmediateTexture GetJobIconSimple(JobID jobId)
+        {
+            var iconID = 62000 + (uint)jobId;
+
+            // Outside of bounds, either DoL, DoH, or we messed up.
+            if (iconID < 62001u || iconID > 62042u)
+                iconID = 62045u;
+            // Adventurer
+            if (jobId == 0u)
+                iconID = 62046u;
+            return GetIcon(iconID);
+        }
 
         //This will check if its a class (so gladiator, marauder and stuff) and return it as Job (paladin, warrior)
         public static JobID SanitizeJob(JobID jobID)
