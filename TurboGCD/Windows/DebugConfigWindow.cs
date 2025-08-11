@@ -3,7 +3,7 @@ using System.Collections;
 using System.Linq;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace TurboGCD.Windows
 {

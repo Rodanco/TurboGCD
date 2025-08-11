@@ -97,7 +97,7 @@ namespace TurboGCD
                 Services.Log.Error(e.Message);
             }
             if (AddonCross == null)
-                AddonCross = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
+                AddonCross = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross").Address;
             gamepadPoll?.Enable();
 
             if (HotbarModule == null)
@@ -235,7 +235,7 @@ namespace TurboGCD
         public void Enable()
         {
             gamepadPoll?.Enable();
-            var other = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
+            var other = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross").Address;
             if (AddonCross == null || AddonCross->IsVisible != other->IsVisible)
                 AddonCross = other;
             Services.PrintInfo("Enabling GamePad.cs");
@@ -262,7 +262,7 @@ namespace TurboGCD
                 HotbarModule = RaptureHotbarModule.Instance();
             if (gamepadPoll == null)
                 gamepadPoll = Services.Hooks.HookFromSignature<ControllerPoll>("40 55 53 57 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 44 0F 29 B4 24 ?? ?? ?? ??", GamepadPool);
-            var addon = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross");
+            var addon = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross").Address;
             if (AddonCross == null || AddonCross != addon)
             {
                 AddonCross = addon;
