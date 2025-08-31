@@ -1,13 +1,14 @@
-using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Textures;
-using Dalamud.Interface.Windowing;
-using Lumina.Data.Parsing.Scd;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Textures;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Windowing;
+using Lumina.Data.Parsing.Scd;
 
 namespace TurboGCD.Windows;
 
@@ -122,7 +123,7 @@ public class ConfigWindow : Window, IDisposable
                 //ImGui.SetNextItemOpen(false);
                 if (ImGui.CollapsingHeader(role.CollapserName))
                 {
-                    ImGui.SameLine(0, 3 * ImGui.GetStyle().ItemSpacing.X);
+                    ImGuiHelpers.ScaledRelativeSameLine(0, 3 * ImGui.GetStyle().ItemSpacing.X);
                     ImGui.Image(role.RoleIcon.GetWrapOrEmpty().Handle, new(JobIconHeight * scaleMult, JobIconHeight * scaleMult), new(0, 0), new Vector2(1, 1));
 
                     float height = role.Jobs.Length * JobHeight;
@@ -151,7 +152,7 @@ public class ConfigWindow : Window, IDisposable
                         string idString = job.JobSave.JobID.ToString();
                         if (ImGui.CollapsingHeader(idString))
                         {
-                            ImGui.SameLine(0, 3 * ImGui.GetStyle().ItemSpacing.X);
+                            ImGuiHelpers.ScaledRelativeSameLine(0, 3 * ImGui.GetStyle().ItemSpacing.X);
                             ImGui.Image(job.JobIcon.GetWrapOrEmpty().Handle, new(JobIconHeight * scaleMult, JobIconHeight * scaleMult), new(0, 0), new Vector2(1, 1));
 
                             if (ImGui.Button($"Reset to default for {idString}"))
@@ -190,7 +191,7 @@ public class ConfigWindow : Window, IDisposable
                         else
                         {
                             childrenOpen[roleIndex] = childrenOpen[roleIndex].Replace(jobIndex.ToString(), "");
-                            ImGui.SameLine(0, 3 * ImGui.GetStyle().ItemSpacing.X);
+                            ImGuiHelpers.ScaledRelativeSameLine(0, 3 * ImGui.GetStyle().ItemSpacing.X);
                             ImGui.Image(job.JobIcon.GetWrapOrEmpty().Handle, new(JobIconHeight * scaleMult, JobIconHeight * scaleMult), new(0, 0), new Vector2(1, 1));
                         }
                     }
@@ -200,7 +201,7 @@ public class ConfigWindow : Window, IDisposable
                 }
                 else
                 {
-                    ImGui.SameLine(0, 3 * ImGui.GetStyle().ItemSpacing.X);
+                    ImGuiHelpers.ScaledRelativeSameLine(0, 3 * ImGui.GetStyle().ItemSpacing.X);
                     ImGui.Image(role.RoleIcon.GetWrapOrEmpty().Handle, new(JobIconHeight * scaleMult, JobIconHeight * scaleMult), new(0, 0), new Vector2(1, 1));
                 }
             }
@@ -237,7 +238,7 @@ public class ConfigWindow : Window, IDisposable
         ImGui.Image(action.Texture.GetWrapOrEmpty().Handle, new(ActionIconHeight * scaleMult, ActionIconHeight * scaleMult), new(0, 0), new Vector2(1, 1));
         ImGui.EndDisabled();
         disableCount--;
-        ImGui.SameLine(0, 1 * ImGui.GetStyle().ItemSpacing.X);
+        ImGuiHelpers.ScaledRelativeSameLine(0, 1 * ImGui.GetStyle().ItemSpacing.X);
         if (ImGui.Checkbox(action.Name, ref check))
         {
             if (check)
@@ -493,7 +494,7 @@ public sealed class NewConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        float scaleMult = ImGui.GetIO().FontGlobalScale;
+        float global_scale = ImGuiHelpers.GlobalScale;
         if(ImGui.BeginChild("Jobs Buttons", new Vector2(150, ImGui.GetScrollY()), true))
         {
             int current_index = 0;
@@ -522,7 +523,7 @@ public sealed class NewConfigWindow : Window, IDisposable
                         break;
                 }
                 if (current_index % 2 == 1)
-                    ImGui.SameLine(0, 10);
+                    ImGuiHelpers.ScaledRelativeSameLine(0, 64);
                 
                 bool selected = ImGui.ImageButton(jobs_collapser[current_index].GetIcon(jobs_selected[current_index]), new Vector2(48, 48));
                 if (current_index + 1 >= jobs_selected.Length)
@@ -539,7 +540,7 @@ public sealed class NewConfigWindow : Window, IDisposable
             }
             ImGui.EndChild();
         }
-        ImGui.SameLine();
+        ImGuiHelpers.ScaledRelativeSameLine(0, 150);
         int disableCount = 0;
         if (ImGui.BeginChild("Jobs Actions", new Vector2(ImGui.GetWindowWidth() - 150 - ImGui.GetStyle().WindowPadding.X * 3, ImGui.GetScrollY()), true))
         {
@@ -547,8 +548,8 @@ public sealed class NewConfigWindow : Window, IDisposable
             {
                 var job = jobs_collapser[index_job_selected];
                 bool enabled = job.IsEnabled;
-                ImGui.Image(job.GetIcon(enabled), new Vector2(32, 32));
-                ImGui.SameLine(0, 20);
+                ImGui.Image(job.GetIcon(enabled), new Vector2(32 * global_scale, 32 * global_scale));
+                ImGuiHelpers.ScaledRelativeSameLine(0, 64);
                 bool changed = ImGui.Checkbox("Is Enabled?", ref enabled);
                 job.IsEnabled = enabled;
                 if (changed && Plugin.GamePad.CurrentJob == job.JobID)
@@ -562,16 +563,16 @@ public sealed class NewConfigWindow : Window, IDisposable
                     ImGui.SetCursorPosX((ImGui.GetColumnWidth() - ImGui.CalcTextSize("GCDs").X) * .5f);
                     ImGui.Text("GCDs");
                     foreach (var action in job.GCDActionsData)
-                        DrawActionData(job, action, scaleMult, ref disableCount);
+                        DrawActionData(job, action, ref disableCount);
                     ImGui.EndChild();
                 }
-                ImGui.SameLine();
+                ImGuiHelpers.ScaledRelativeSameLine(0, 64);
                 if (ImGui.BeginChild("job ogcds", new Vector2(ImGui.GetColumnWidth(), ImGui.GetScrollY()), true))
                 {
                     ImGui.SetCursorPosX((ImGui.GetColumnWidth() - ImGui.CalcTextSize("oGCDs").X) * .5f);
                     ImGui.Text("oGCDs");
                     foreach (var action in job.OGCDActionsData)
-                        DrawActionData(job, action, scaleMult, ref disableCount);
+                        DrawActionData(job, action, ref disableCount);
                     ImGui.EndChild();
                 }
                 if (!enabled)
@@ -592,15 +593,15 @@ public sealed class NewConfigWindow : Window, IDisposable
         index_job_selected = job_index;
     }
 
-    private void DrawActionData(in JobCollapser job, in ActionData action, in float scaleMult, ref int disableCount)
+    private void DrawActionData(in JobCollapser job, in ActionData action, ref int disableCount)
     {
         bool check = action.IsSelected;
         ImGui.BeginDisabled(!check);
         disableCount++;
-        ImGui.Image(action.Texture.GetWrapOrEmpty().Handle, new(ActionIconHeight * scaleMult, ActionIconHeight * scaleMult), new(0, 0), new Vector2(1, 1));
+        ImGui.Image(action.Texture.GetWrapOrEmpty().Handle, ImGuiHelpers.ScaledVector2(ActionIconHeight, ActionIconHeight), new(0, 0), new Vector2(1, 1));
         ImGui.EndDisabled();
         disableCount--;
-        ImGui.SameLine(0, 1 * ImGui.GetStyle().ItemSpacing.X);
+        ImGuiHelpers.ScaledRelativeSameLine(0, ImGui.GetStyle().ItemSpacing.X);
         if (ImGui.Checkbox(action.Name, ref check))
         {
             if (check)
