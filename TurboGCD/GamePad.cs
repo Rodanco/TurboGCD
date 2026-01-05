@@ -72,7 +72,7 @@ namespace TurboGCD
         //private ActionManager* ActionMan { get; set; }
 
         //private  bool[,] possiblesInputs;
-        private int offsetCrossbar = 0;
+        //private int offsetCrossbar = 0;
         private uint[] gcdsToCheck { get; set; }
         private bool is_job_enabled { get; set; } = true;
         private Random RandomRange { get; set; }
@@ -110,7 +110,7 @@ namespace TurboGCD
             is_job_enabled = is_enabled;
             if (jobIndex == JobID.None)
             {
-                jobIndex = (JobID)Services.ClientState.LocalPlayer.ClassJob.RowId;
+                jobIndex = (JobID)Services.PlayerState.ClassJob.RowId;
                 is_job_enabled = Services.GlobalConfiguration.GetIsEnabledJob(jobIndex);
                 Services.PrintInfo($"Updating job matrix to {jobIndex}");
             }
@@ -234,10 +234,8 @@ namespace TurboGCD
 
         public void Enable()
         {
-            gamepadPoll?.Enable();
-            var other = (AddonActionCross*)Services.GameGui.GetAddonByName("_ActionCross").Address;
-            if (AddonCross == null || AddonCross->IsVisible != other->IsVisible)
-                AddonCross = other;
+            RecheckStuff();
+            gamepadPoll?.Enable();            
             Services.PrintInfo("Enabling GamePad.cs");
             //useActionDetour?.Enable();
         }

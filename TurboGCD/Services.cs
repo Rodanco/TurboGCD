@@ -12,6 +12,7 @@ namespace TurboGCD
         internal static bool Inistialized { get; private set; }
         [PluginService] public static IDataManager DataManager { get; private set; }
         [PluginService] public static IClientState ClientState { get; private set; }
+        [PluginService] public static IPlayerState PlayerState { get; private set; }
         [PluginService] public static ICommandManager Command { get; private set; }
         [PluginService] public static ICondition Condition { get; private set; }
         [PluginService] public static IGameConfig GameConfig { get; private set; }

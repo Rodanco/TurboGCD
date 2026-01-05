@@ -114,14 +114,14 @@ public sealed class JobSave
     public void UpdatePVE(uint[] newPVE)
     {
         PVE = newPVE;
-        if (Services.ClientState.IsLoggedIn && Services.ClientState.LocalPlayer.ClassJob.RowId == (uint)JobID && !Services.ClientState.IsPvP)
+        if (Services.ClientState.IsLoggedIn && Services.PlayerState.ClassJob.RowId == (uint)JobID && !Services.ClientState.IsPvP)
             Plugin.GamePad.UpdateJobMatrix(JobID, IsEnabled);
     }
 
     public void UpdatePVP(uint[] newPVP)
     {
         PVP = newPVP;
-        if (Services.ClientState.IsLoggedIn && Services.ClientState.LocalPlayer.ClassJob.RowId == (uint)JobID && Services.ClientState.IsPvP)
+        if (Services.ClientState.IsLoggedIn && Services.PlayerState.ClassJob.RowId == (uint)JobID && Services.ClientState.IsPvP)
             Plugin.GamePad.UpdateJobMatrix(JobID, IsEnabled);
     }
 

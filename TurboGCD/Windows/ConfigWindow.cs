@@ -72,7 +72,7 @@ public sealed class NewConfigWindow : Window, IDisposable
 
         if (!Services.ClientState.IsLoggedIn)
             return;
-        var jobIndex = (JobID)Services.ClientState.LocalPlayer.ClassJob.RowId;
+        var jobIndex = (JobID)Services.PlayerState.ClassJob.RowId;
         if (jobIndex != JobID.None)
         {
             for (int i = jobs_collapser.Length - 1; i > -1; i--)
@@ -135,8 +135,10 @@ public sealed class NewConfigWindow : Window, IDisposable
                     ImGui.SameLine(0, 10 * global_scale);
 
                 bool selected = ImGui.ImageButton(jobs_collapser[current_index].GetIcon(jobs_selected[current_index]), new Vector2(JobIconHeight * global_scale, JobIconHeight * global_scale));
-                if (current_index + 1 >= jobs_selected.Length)
-                    continue;
+                // if(current_index == 20)
+                //     Services.Log.Info($"{jobs_selected[current_index]}");
+                // if (current_index + 1 >= jobs_selected.Length)
+                //     continue;
                 if (selected && index_job_selected != current_index)
                 {
                     SelectJobIndex(current_index);
@@ -196,7 +198,7 @@ public sealed class NewConfigWindow : Window, IDisposable
     private void SelectJobIndex(int job_index)
     {
         jobs_selected[job_index] = true;
-        Services.Log.Info($"{index_job_selected}, {job_index}");
+        //Services.Log.Info($"{index_job_selected}, {job_index}");
         if (index_job_selected > -1)
             jobs_selected[index_job_selected] = false;
         index_job_selected = job_index;
